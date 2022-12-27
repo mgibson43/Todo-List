@@ -6,12 +6,20 @@
 
 html {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+  color: #222;
 }
 
 li {
   display: flex;
   justify-content: space-between;
   padding: 0.6rem 1rem;
+
+  cursor: pointer;
+}
+
+li:hover {
+  background-color: #c3fae8;
 }
 
 .container {
@@ -38,9 +46,21 @@ li {
   background-color: #5c940d;
 }
 
+.inbox-box,
+.projects-box {
+  padding-top: 2rem;
+}
+
+.projects-box {
+  padding: 2rem 1rem 1rem 1rem;
+}
+
 .project-title {
   display: flex;
+  align-items: center;
   gap: 1rem;
+
+  font-size: 18px;
 }
 
 .icon-box {
@@ -57,7 +77,13 @@ li {
   color: #1971c2;
 }
 
-.icon-
+.icon-today {
+  color: #f59f00;
+}
+
+.icon-priority {
+  color: #3b5bdb;
+}
 
 header .icon:hover {
   transform: scale(120%);
