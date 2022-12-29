@@ -1,11 +1,22 @@
 import './style.css';
-import { format, getDay, isDate, isPast, compareAsc, isValid, isToday, isYesterday } from 'date-fns';
+import { format, getDay, isFuture, isPast, compareAsc, isToday, isYesterday } from 'date-fns';
 
 const content = document.getElementById('content');
-const todoList = [];
+let todoList = [];
+let overDueList = [];
+let todayList = [];
+let futureList = [];
 const today = new Date();
 
-todoList.push(createTodo('Hello', 'Hello World', , '1'));
+todoList.push(createTodo("Matthew's Birthday", "He's old", 9, 0, 1998, 'four'));
+todoList.push(createTodo("Xio's Birthday", "She's young", 11, 3, 2001, 'one'));
+todoList.push(createTodo('you?', 'this is a todo', 8, 3, 2200, '3'));
+todoList.push(createTodo('are', 'this is a todo', 7, 4, 2042, '2'));
+todoList.push(createTodo('how', 'this is a todo', 6, 5, 2023, '3'));
+todoList = sortTodoListByDate(todoList);
+overDueList = todoList.filter(todo => isPast(todo.dueDate));
+todayList = todoList.filter(todo => isToday(todo.dueDate));
+futureList = todoList.filter(todo => isFuture(todo.dueDate));
 
 function inbox() {
   content.innerHTML = '';
@@ -24,47 +35,63 @@ function inbox() {
   inboxTitleBox.appendChild(date);
 
   content.appendChild(inboxTitleBox);
+  content.appendChild(overDueTodo());
+}
 
+function overDueTodo() {
   const overDueBox = document.createElement('div');
-  const inboxBox = document.createElement('div');
+  const heading = document.createElement('h3');
+  const overDueInbox = document.createElement('div');
 
-  todoList.forEach(todo => {
-    const todoCard = document.createElement('div');
-    const todoTitle = document.createElement('p');
-    const todoDesc = document.createElement('p');
-    const todoDueDate = document.createElement('p');
-    const todoPriority = document.createElement('p');
+  heading.classList.add('heading');
+  heading.textContent = 'Overdue';
+  overDueList.forEach(todo => overDueInbox.appendChild(todoCard(todo)));
 
-    todoTitle.textContent = todo.title;
-    todoDesc.textContent = todo.desc;
-    if (isToday(todo.dueDate)) {
-      todoDueDate.textContent = 'Today';
-    } else if (isYesterday(todo.dueDate)) {
-      todoDueDate.textContent = 'Yesterday';
-    } else {
-      todoDueDate.textContent = todo.dueDate;
-    }
-    todoPriority.textContent = todo.priority;
+  overDueBox.appendChild(heading);
+  overDueBox.appendChild(overDueInbox);
+  return overDueBox;
+}
 
-    todoCard.appendChild(todoTitle);
-    todoCard.appendChild(todoDesc);
-    todoCard.appendChild(todoDueDate);
-    todoCard.appendChild(todoPriority);
+function todayTodo() {
 
-    inboxBox.appendChild(todoCard);
-  });
+}
 
-  content.appendChild(overDueBox);
-  content.appendChild(inboxBox);
+function futureTodo() {
+
+}
+
+function todoCard(todo) {
+  const todoCardEl = document.createElement('div');
+  const title = document.createElement('p');
+  const desc = document.createElement('p');
+  const dueDate = document.createElement('p');
+
+  todoCardEl.classList.add('todo-card');
+  todoCardEl.classList.add(`priority-${todo.priority}`);
+  title.classList.add('todo-title');
+  desc.classList.add('todo-desc');
+  dueDate.classList.add('todo-due-date');
+
+  title.textContent = todo.title;
+  desc.textContent = todo.desc;
+  dueDate.textContent = format(todo.dueDate, 'MMM dd, yyyy');
+
+  todoCardEl.appendChild(title);
+  todoCardEl.appendChild(desc);
+  todoCardEl.appendChild(dueDate);
+
+  return todoCardEl;
 }
 
 inbox();
 
-function createTodo(title, desc, dueDate, priority) {
+function createTodo(title, desc, day, mon, year, priority) {
+  const dueDate = new Date(year, mon, day);
+
   return {
     title,
     desc,
-    dueDate,
+    dueDate: dueDate,
     priority
   };
 }
@@ -76,10 +103,21 @@ function addTodo() {
   const priority = document.querySelector('.priority');
 
   todoList.push(createTodo(title, desc, dueDate, priority));
+  todoList = sortTodoListByDate(todoList);
 }
 
-function sort() {
 
+function sortTodoListByDate(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 0; j < (arr.length - i - 1); j++) {
+      if (compareAsc(arr[j].dueDate, arr[j+1].dueDate) === 1) {
+        let temp = arr[j];
+        arr[j] = arr[j + 1];
+        arr[j + 1] = temp;
+      }
+    }
+  }
+  return arr;
 }
 
 function updateToday() {
@@ -89,17 +127,3 @@ function updateToday() {
 function updateInbox() {
 
 }
-
-function updatePriorityOne() {
-
-}
-
-function updatePriorityTwo() {
-
-}
-
-function updatePriorityThree() {
-
-}
-
-
