@@ -2,6 +2,10 @@ import './style.css';
 import { format, getDay, isFuture, isPast, compareAsc, isToday, isYesterday } from 'date-fns';
 
 const content = document.getElementById('content');
+const mainInbox = document.querySelector('.main-inbox');
+const docTodayInbox = document.querySelector('.today-inbox');
+const docPriorityInbox = document.querySelector('.priority-inbox');
+
 let todoList = [];
 let overDueList = [];
 let todayList = [];
@@ -15,11 +19,6 @@ todoList.push(createTodo("Today", 'today card', 30, 11, 2022, '4'));
 todoList.push(createTodo('you?', 'this is a todo', 8, 3, 2200, '3'));
 todoList.push(createTodo('are', 'this is a todo', 7, 4, 2042, '2'));
 todoList.push(createTodo('how', 'this is a todo', 6, 5, 2023, '3'));
-todoList = sortTodoListByDate(todoList);
-overDueList = todoList.filter(todo => (isPast(todo.dueDate) && !isToday(todo.dueDate)));
-todayList = todoList.filter(todo => isToday(todo.dueDate));
-futureList = todoList.filter(todo => isFuture(todo.dueDate));
-priorityList = todoList.sort((a, b) => a.priority - b.priority);
 
 function inbox() {
   content.innerHTML = '';
@@ -157,8 +156,6 @@ function todoCard(todo) {
   return todoCardEl;
 }
 
-priorityInbox();
-
 function createTodo(title, desc, day, mon, year, priority) {
   const dueDate = new Date(year, mon, day);
 
@@ -194,10 +191,22 @@ function sortTodoListByDate(arr) {
   return arr;
 }
 
-function updateToday() {
-  
+function updateTodoLists() {
+  todoList = sortTodoListByDate(todoList);
+  overDueList = [];
+  todayList = [];
+  futureList = [];
+  priorityList = [];
+
+  overDueList = todoList.filter(todo => (isPast(todo.dueDate) && !isToday(todo.dueDate)));
+  todayList = todoList.filter(todo => isToday(todo.dueDate));
+  futureList = todoList.filter(todo => isFuture(todo.dueDate));
+  priorityList = todoList.sort((a, b) => a.priority - b.priority);
 }
 
-function updateInbox() {
+mainInbox.addEventListener('click', inbox);
+docTodayInbox.addEventListener('click', todayInbox);
+docPriorityInbox.addEventListener('click', priorityInbox);
 
-}
+updateTodoLists();
+inbox();
