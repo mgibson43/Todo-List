@@ -6,18 +6,20 @@ let todoList = [];
 let overDueList = [];
 let todayList = [];
 let futureList = [];
+let priorityList = [];
 const today = new Date();
 
-todoList.push(createTodo("Matthew's Birthday", "He's old", 9, 0, 1998, 'four'));
-todoList.push(createTodo("Xio's Birthday", "She's young", 11, 3, 2001, 'one'));
-todoList.push(createTodo("Today", 'today card', 30, 11, 2022, 'four'));
-todoList.push(createTodo('you?', 'this is a todo', 8, 3, 2200, 'three'));
-todoList.push(createTodo('are', 'this is a todo', 7, 4, 2042, 'two'));
-todoList.push(createTodo('how', 'this is a todo', 6, 5, 2023, 'three'));
+todoList.push(createTodo("Matthew's Birthday", "He's old", 9, 0, 1998, '4'));
+todoList.push(createTodo("Xio's Birthday", "She's young", 11, 3, 2001, '1'));
+todoList.push(createTodo("Today", 'today card', 30, 11, 2022, '4'));
+todoList.push(createTodo('you?', 'this is a todo', 8, 3, 2200, '3'));
+todoList.push(createTodo('are', 'this is a todo', 7, 4, 2042, '2'));
+todoList.push(createTodo('how', 'this is a todo', 6, 5, 2023, '3'));
 todoList = sortTodoListByDate(todoList);
 overDueList = todoList.filter(todo => (isPast(todo.dueDate) && !isToday(todo.dueDate)));
 todayList = todoList.filter(todo => isToday(todo.dueDate));
 futureList = todoList.filter(todo => isFuture(todo.dueDate));
+priorityList = todoList.sort((a, b) => a.priority - b.priority);
 
 function inbox() {
   content.innerHTML = '';
@@ -46,6 +48,28 @@ function inbox() {
   if (futureList.length > 0) {
     content.appendChild(futureTodo());
   }
+}
+
+function todayInbox() {
+  content.innerHTML = '';
+
+  if (todayList.length > 0) {
+    content.appendChild(todayTodo());
+  }
+
+  const heading = document.querySelector('.heading');
+  heading.classList.add('inbox-title');
+}
+
+function priorityInbox() {
+  content.innerHTML = '';
+
+  if (priorityList.length > 0) {
+    content.appendChild(priorityTodo());
+  }
+
+  const heading = document.querySelector('.heading');
+  heading.classList.add('inbox-title');
 }
 
 function overDueTodo() {
@@ -96,6 +120,20 @@ function futureTodo() {
   return futureBox;
 }
 
+function priorityTodo() {
+  const priorityBox = document.createElement('div');
+  const heading = document.createElement('h3');
+  const priorityInbox = document.createElement('div');
+
+  heading.classList.add('heading');
+  heading.textContent = 'Priority Inbox';
+  priorityList.forEach(todo => priorityInbox.appendChild(todoCard(todo)));
+
+  priorityBox.appendChild(heading);
+  priorityBox.appendChild(priorityInbox);
+  return priorityBox;
+}
+
 function todoCard(todo) {
   const todoCardEl = document.createElement('div');
   const title = document.createElement('p');
@@ -119,7 +157,7 @@ function todoCard(todo) {
   return todoCardEl;
 }
 
-inbox();
+priorityInbox();
 
 function createTodo(title, desc, day, mon, year, priority) {
   const dueDate = new Date(year, mon, day);

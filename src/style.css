@@ -165,18 +165,18 @@ header .icon:hover {
 
 /* Priority settings */
 
-.priority-one {
+.priority-1 {
   border: 1px solid #e03131;
 }
 
-.priority-two {
+.priority-2 {
   border: 1px solid #f59f00;
 }
 
-.priority-three {
+.priority-3 {
   border: 1px solid #1971c2;
 }
 
-.priority-four {
+.priority-4 {
   border: 1px solid #ccc;
 }
