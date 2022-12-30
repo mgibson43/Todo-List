@@ -153,6 +153,15 @@ header .icon:hover {
   justify-self: flex-end;
 }
 
+.inbox {
+  margin-bottom: 2rem;
+}
+
+.date,
+.todo-due-date {
+  font-size: 12px;
+  color: #777;
+}
 
 /* Priority settings */
 

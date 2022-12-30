@@ -10,11 +10,12 @@ const today = new Date();
 
 todoList.push(createTodo("Matthew's Birthday", "He's old", 9, 0, 1998, 'four'));
 todoList.push(createTodo("Xio's Birthday", "She's young", 11, 3, 2001, 'one'));
-todoList.push(createTodo('you?', 'this is a todo', 8, 3, 2200, '3'));
-todoList.push(createTodo('are', 'this is a todo', 7, 4, 2042, '2'));
-todoList.push(createTodo('how', 'this is a todo', 6, 5, 2023, '3'));
+todoList.push(createTodo("Today", 'today card', 30, 11, 2022, 'four'));
+todoList.push(createTodo('you?', 'this is a todo', 8, 3, 2200, 'three'));
+todoList.push(createTodo('are', 'this is a todo', 7, 4, 2042, 'two'));
+todoList.push(createTodo('how', 'this is a todo', 6, 5, 2023, 'three'));
 todoList = sortTodoListByDate(todoList);
-overDueList = todoList.filter(todo => isPast(todo.dueDate));
+overDueList = todoList.filter(todo => (isPast(todo.dueDate) && !isToday(todo.dueDate)));
 todayList = todoList.filter(todo => isToday(todo.dueDate));
 futureList = todoList.filter(todo => isFuture(todo.dueDate));
 
@@ -23,19 +24,28 @@ function inbox() {
 
   const inboxTitleBox = document.createElement('div');
   const inboxTitle = document.createElement('h2');
-  const date = document.createElement('p');
+  const date = document.createElement('span');
 
   inboxTitleBox.classList.add('inbox-title-box');
   inboxTitle.classList.add('inbox-title');
 
-  inboxTitle.textContent = 'Inbox';
+  inboxTitle.textContent = 'Inbox ';
+  date.classList.add('date');
   date.textContent = format(today, 'EEE, MMM dd');
 
+  inboxTitle.appendChild(date);
   inboxTitleBox.appendChild(inboxTitle);
-  inboxTitleBox.appendChild(date);
 
   content.appendChild(inboxTitleBox);
-  content.appendChild(overDueTodo());
+  if (overDueList.length > 0) {
+    content.appendChild(overDueTodo());
+  }
+  if (todayList.length > 0) {
+    content.appendChild(todayTodo());
+  }
+  if (futureList.length > 0) {
+    content.appendChild(futureTodo());
+  }
 }
 
 function overDueTodo() {
@@ -43,6 +53,7 @@ function overDueTodo() {
   const heading = document.createElement('h3');
   const overDueInbox = document.createElement('div');
 
+  overDueBox.classList.add('inbox');
   heading.classList.add('heading');
   heading.textContent = 'Overdue';
   overDueList.forEach(todo => overDueInbox.appendChild(todoCard(todo)));
@@ -53,11 +64,36 @@ function overDueTodo() {
 }
 
 function todayTodo() {
+  const todayBox = document.createElement('div');
+  const heading = document.createElement('h3');
+  const todayDate = document.createElement('span');
+  const todayInbox = document.createElement('div');
 
+  todayBox.classList.add('inbox');
+  heading.classList.add('heading');
+  heading.textContent = `Today `;
+  todayDate.classList.add('date');
+  todayDate.textContent = `${format(today, 'EEE, MMM dd')}`;
+  heading.appendChild(todayDate);
+  todayList.forEach(todo => todayInbox.appendChild(todoCard(todo)));
+
+  todayBox.appendChild(heading);
+  todayBox.appendChild(todayInbox);
+  return todayBox;
 }
 
 function futureTodo() {
+  const futureBox = document.createElement('div');
+  const heading = document.createElement('h3');
+  const futureInbox = document.createElement('div');
 
+  heading.classList.add('heading');
+  heading.textContent = 'Future Due';
+  futureList.forEach(todo => futureInbox.appendChild(todoCard(todo)));
+
+  futureBox.appendChild(heading);
+  futureBox.appendChild(futureInbox);
+  return futureBox;
 }
 
 function todoCard(todo) {
