@@ -85,7 +85,8 @@ li:hover {
   color: #3b5bdb;
 }
 
-header .icon:hover {
+header .icon:hover,
+.add-project:hover {
   transform: scale(120%);
   cursor: pointer;
 }
@@ -188,4 +189,10 @@ header .icon:hover {
 
 .priority-4 {
   border: 1px solid #ccc;
+}
+
+.title-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

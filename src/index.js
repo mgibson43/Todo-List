@@ -3,10 +3,12 @@ import { format, getDay, isFuture, isPast, compareAsc, isToday, isYesterday } fr
 
 const content = document.getElementById('content');
 const mainInbox = document.querySelector('.main-inbox');
+const homeBtn = document.querySelector('.btn-home');
 const docTodayInbox = document.querySelector('.today-inbox');
 const docPriorityInbox = document.querySelector('.priority-inbox');
 
 let projects = [];
+let currentProject = 'This'
 let todoList = [];
 let overDueList = [];
 let todayList = [];
@@ -22,12 +24,10 @@ todoList.push(createTodo('are', 'this is a todo', 7, 4, 2042, '2', ''));
 todoList.push(createTodo('how', 'this is a todo', 6, 5, 2023, '3', ''));
 
 projects.push(project('This'));
-projects.push(project('is'));
-projects.push(project('a'));
-projects.push(project('project'));
-projects.push(project('yaknow'));
+projects.push(project('Project'));
 
-console.log(projects);
+todoList.push(createTodo('Test', 'Project Test', 31, 11, 2022, '4', projects[0].projID));
+todoList.push(createTodo('Test', 'Project Test', 31, 10, 2022, '4', projects[1].projID));
 
 function inbox() {
   content.innerHTML = '';
@@ -156,6 +156,7 @@ function todoCard(todo) {
   const title = document.createElement('p');
   const desc = document.createElement('p');
   const dueDate = document.createElement('p');
+  const project = document.createElement('p');
 
   todoCardEl.addEventListener('click', removeTodo);
 
@@ -168,48 +169,48 @@ function todoCard(todo) {
   desc.classList.add('todo-desc');
 
   dueDate.classList.add('todo-due-date');
+  project.classList.add('todo-due-date');
 
   title.textContent = todo.title;
   desc.textContent = todo.desc;
   dueDate.textContent = format(todo.dueDate, 'MMM dd, yyyy');
+  project.textContent = todo.type;
 
   todoCardEl.appendChild(title);
   todoCardEl.appendChild(desc);
   todoCardEl.appendChild(dueDate);
+  todoCardEl.appendChild(project);
 
   return todoCardEl;
 }
 
-function project(projName) {
-  let list = [];
-  let currentProject = false;
+function project(projID) {
 
   return {
-    list,
-    projName,
-    currentProject,
+    projID,
   }
 }
 
 function projectInbox() {
-  const workingProject = projects.find(project => project.currentProject === true);
+  const workingList = todoList.filter(todo => todo.type === currentProject);
   const projectBox = document.createElement('div');
   const heading = document.createElement('h3');
   const projectInbox = document.createElement('div');
 
   heading.classList.add('heading');
-  heading.textContent = workingProject.projName;
-  workingProject.forEach(todo => priorityInbox.appendChild(todoCard(todo)));
+  heading.textContent = currentProject;
 
+  workingList.forEach(todo => projectInbox.appendChild(todoCard(todo)));
+  
   projectBox.appendChild(heading);
   projectBox.appendChild(projectInbox);
-  return projectBox;
+  content.appendChild(projectBox);
 }
 
 function createTodo(title, desc, day, mon, year, priority, type) {
   const dueDate = new Date(year, mon, day);
 
-  type === '' ? type = 'default' : type = type;
+  type === '' ? type = 'inbox' : type = type;
 
   return {
     title,
@@ -265,8 +266,9 @@ function updateTodoLists() {
 }
 
 mainInbox.addEventListener('click', inbox);
+homeBtn.addEventListener('click', inbox);
 docTodayInbox.addEventListener('click', todayInbox);
 docPriorityInbox.addEventListener('click', priorityInbox);
 
 updateTodoLists();
-inbox();
+projectInbox();
