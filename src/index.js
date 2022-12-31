@@ -12,7 +12,6 @@ let overDueList = [];
 let todayList = [];
 let futureList = [];
 let priorityList = [];
-let index = 0;
 const today = new Date();
 
 todoList.push(createTodo("Matthew's Birthday", "He's old", 9, 0, 1998, '4', ''));
@@ -163,7 +162,7 @@ function todoCard(todo) {
   todoCardEl.classList.add('todo-card');
   todoCardEl.classList.add(`priority-${todo.priority}`);
   todoCardEl.dataset.project = todo.type;
-  todoCardEl.dataset.value = index;
+  todoCardEl.dataset.value = todo.title;
 
   title.classList.add('todo-title');
   desc.classList.add('todo-desc');
@@ -178,7 +177,6 @@ function todoCard(todo) {
   todoCardEl.appendChild(desc);
   todoCardEl.appendChild(dueDate);
 
-  index++;
   return todoCardEl;
 }
 
@@ -203,27 +201,10 @@ function projectInbox() {
   heading.textContent = workingProject.projName;
   workingProject.forEach(todo => priorityInbox.appendChild(todoCard(todo)));
 
-  priorityBox.appendChild(heading);
-  priorityBox.appendChild(projectInbox);
+  projectBox.appendChild(heading);
+  projectBox.appendChild(projectInbox);
   return projectBox;
 }
-
-// function createProject(name) {
-//   // const projectName = document.querySelector('.project-create-name');
-//   const project = document.createElement('li');
-//   const projectName = name;
-  
-//   project.classList.add('project');
-//   project.dataset.project = projectName;
-//   project.textContent = projectName;
-  
-//   return project;
-// }
-
-// function updateProjects() {
-//   const projectsList = document.querySelector('.projects-list');
-//   projects.forEach(project => projectsList.appendChild(project))
-// }
 
 function createTodo(title, desc, day, mon, year, priority, type) {
   const dueDate = new Date(year, mon, day);
@@ -250,8 +231,10 @@ function addTodo() {
 }
 
 function removeTodo() {
+  const index = todoList.findIndex(todo => todo.title === this.dataset.value);
+  todoList.splice(index, 1);
   this.remove();
-  console.log(todoList[this.dataset.value]);
+  updateTodoLists();
 }
 
 
