@@ -6,6 +6,7 @@ const mainInbox = document.querySelector('.main-inbox');
 const docTodayInbox = document.querySelector('.today-inbox');
 const docPriorityInbox = document.querySelector('.priority-inbox');
 
+let projects = [];
 let todoList = [];
 let overDueList = [];
 let todayList = [];
@@ -13,12 +14,12 @@ let futureList = [];
 let priorityList = [];
 const today = new Date();
 
-todoList.push(createTodo("Matthew's Birthday", "He's old", 9, 0, 1998, '4'));
-todoList.push(createTodo("Xio's Birthday", "She's young", 11, 3, 2001, '1'));
-todoList.push(createTodo("Today", 'today card', 30, 11, 2022, '4'));
-todoList.push(createTodo('you?', 'this is a todo', 8, 3, 2200, '3'));
-todoList.push(createTodo('are', 'this is a todo', 7, 4, 2042, '2'));
-todoList.push(createTodo('how', 'this is a todo', 6, 5, 2023, '3'));
+todoList.push(createTodo("Matthew's Birthday", "He's old", 9, 0, 1998, '4', ''));
+todoList.push(createTodo("Xio's Birthday", "She's young", 11, 3, 2001, '1', ''));
+todoList.push(createTodo("Today", 'today card', 30, 11, 2022, '4', ''));
+todoList.push(createTodo('you?', 'this is a todo', 8, 3, 2200, '3', ''));
+todoList.push(createTodo('are', 'this is a todo', 7, 4, 2042, '2', ''));
+todoList.push(createTodo('how', 'this is a todo', 6, 5, 2023, '3', ''));
 
 function inbox() {
   content.innerHTML = '';
@@ -141,8 +142,11 @@ function todoCard(todo) {
 
   todoCardEl.classList.add('todo-card');
   todoCardEl.classList.add(`priority-${todo.priority}`);
+  todoCardEl.dataset.project = todo.type;
+
   title.classList.add('todo-title');
   desc.classList.add('todo-desc');
+
   dueDate.classList.add('todo-due-date');
 
   title.textContent = todo.title;
@@ -156,14 +160,21 @@ function todoCard(todo) {
   return todoCardEl;
 }
 
-function createTodo(title, desc, day, mon, year, priority) {
+function createProject() {
+
+}
+
+function createTodo(title, desc, day, mon, year, priority, type) {
   const dueDate = new Date(year, mon, day);
+
+  type === '' ? type = 'default' : type = type;
 
   return {
     title,
     desc,
     dueDate: dueDate,
-    priority
+    priority,
+    type,
   };
 }
 
