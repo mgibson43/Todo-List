@@ -12,6 +12,7 @@ let overDueList = [];
 let todayList = [];
 let futureList = [];
 let priorityList = [];
+let index = 0;
 const today = new Date();
 
 todoList.push(createTodo("Matthew's Birthday", "He's old", 9, 0, 1998, '4', ''));
@@ -20,6 +21,14 @@ todoList.push(createTodo("Today", 'today card', 30, 11, 2022, '4', ''));
 todoList.push(createTodo('you?', 'this is a todo', 8, 3, 2200, '3', ''));
 todoList.push(createTodo('are', 'this is a todo', 7, 4, 2042, '2', ''));
 todoList.push(createTodo('how', 'this is a todo', 6, 5, 2023, '3', ''));
+
+projects.push(project('This'));
+projects.push(project('is'));
+projects.push(project('a'));
+projects.push(project('project'));
+projects.push(project('yaknow'));
+
+console.log(projects);
 
 function inbox() {
   content.innerHTML = '';
@@ -55,10 +64,11 @@ function todayInbox() {
 
   if (todayList.length > 0) {
     content.appendChild(todayTodo());
+    const heading = document.querySelector('.heading');
+    heading.classList.add('inbox-title');
+  } else {
+    content.appendChild(emptyInbox());
   }
-
-  const heading = document.querySelector('.heading');
-  heading.classList.add('inbox-title');
 }
 
 function priorityInbox() {
@@ -66,10 +76,11 @@ function priorityInbox() {
 
   if (priorityList.length > 0) {
     content.appendChild(priorityTodo());
+    const heading = document.querySelector('.heading');
+    heading.classList.add('inbox-title');
+  } else {
+    content.appendChild(emptyInbox());
   }
-
-  const heading = document.querySelector('.heading');
-  heading.classList.add('inbox-title');
 }
 
 function overDueTodo() {
@@ -85,6 +96,13 @@ function overDueTodo() {
   overDueBox.appendChild(heading);
   overDueBox.appendChild(overDueInbox);
   return overDueBox;
+}
+
+function emptyInbox() {
+  const emptyBox = document.createElement('h3');
+  emptyBox.classList.add('inbox-title');
+  emptyBox.textContent = 'Nothing in this inbox, enjoy your day!';
+  return emptyBox;
 }
 
 function todayTodo() {
@@ -140,9 +158,12 @@ function todoCard(todo) {
   const desc = document.createElement('p');
   const dueDate = document.createElement('p');
 
+  todoCardEl.addEventListener('click', removeTodo);
+
   todoCardEl.classList.add('todo-card');
   todoCardEl.classList.add(`priority-${todo.priority}`);
   todoCardEl.dataset.project = todo.type;
+  todoCardEl.dataset.value = index;
 
   title.classList.add('todo-title');
   desc.classList.add('todo-desc');
@@ -157,12 +178,52 @@ function todoCard(todo) {
   todoCardEl.appendChild(desc);
   todoCardEl.appendChild(dueDate);
 
+  index++;
   return todoCardEl;
 }
 
-function createProject() {
+function project(projName) {
+  let list = [];
+  let currentProject = false;
 
+  return {
+    list,
+    projName,
+    currentProject,
+  }
 }
+
+function projectInbox() {
+  const workingProject = projects.find(project => project.currentProject === true);
+  const projectBox = document.createElement('div');
+  const heading = document.createElement('h3');
+  const projectInbox = document.createElement('div');
+
+  heading.classList.add('heading');
+  heading.textContent = workingProject.projName;
+  workingProject.forEach(todo => priorityInbox.appendChild(todoCard(todo)));
+
+  priorityBox.appendChild(heading);
+  priorityBox.appendChild(projectInbox);
+  return projectBox;
+}
+
+// function createProject(name) {
+//   // const projectName = document.querySelector('.project-create-name');
+//   const project = document.createElement('li');
+//   const projectName = name;
+  
+//   project.classList.add('project');
+//   project.dataset.project = projectName;
+//   project.textContent = projectName;
+  
+//   return project;
+// }
+
+// function updateProjects() {
+//   const projectsList = document.querySelector('.projects-list');
+//   projects.forEach(project => projectsList.appendChild(project))
+// }
 
 function createTodo(title, desc, day, mon, year, priority, type) {
   const dueDate = new Date(year, mon, day);
@@ -186,6 +247,11 @@ function addTodo() {
 
   todoList.push(createTodo(title, desc, dueDate, priority));
   todoList = sortTodoListByDate(todoList);
+}
+
+function removeTodo() {
+  this.remove();
+  console.log(todoList[this.dataset.value]);
 }
 
 
