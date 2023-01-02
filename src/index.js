@@ -208,7 +208,11 @@ function projectInbox() {
 }
 
 function createTodo(title, desc, day, mon, year, priority, type) {
-  const dueDate = new Date(year, mon, day);
+  let dueDate = today;
+
+  if (day != '') {
+    dueDate = new Date(year, mon, day);
+  }
 
   type === '' ? type = 'inbox' : type = type;
 
@@ -252,27 +256,16 @@ function addTodoModal() {
   descBox.appendChild(descInput);
 
   const dateBox = document.createElement('div');
-  const dayInput = document.createElement('input');
-  const monInput = document.createElement('input');
-  const yearInput = document.createElement('input');
+  const dateInput = document.createElement('input');
 
   dateBox.classList.add('modal-box');
-  dateBox.classList.add('modal-box-date');
-  dayInput.classList.add('modal-day');
-  monInput.classList.add('modal-mon');
-  yearInput.classList.add('modal-year');
+  dateInput.classList.add('modal-date');
 
-  dayInput.onkeyup = enableDisable;
-  monInput.onkeyup = enableDisable;
-  yearInput.onkeyup = enableDisable;
+  dateInput.type = 'date';
 
-  dateBox.appendChild(monInput);
-  dateBox.appendChild(dayInput);
-  dateBox.appendChild(yearInput);
+  dateInput.onkeyup = enableDisable;
 
-  dayInput.setAttribute('placeholder', 'DD');
-  monInput.setAttribute('placeholder', 'MM');
-  yearInput.setAttribute('placeholder', 'YYYY');
+  dateBox.appendChild(dateInput);
 
   const btnBox = document.createElement('div');
   const submitBtn = document.createElement('button');
@@ -281,7 +274,7 @@ function addTodoModal() {
   submitBtn.classList.add('submit-btn');
   cancelBtn.classList.add('cancel-btn');
 
-  submitBtn.type = 'submit';
+  submitBtn.type = 'button';
   cancelBtn.type = 'button';
 
   submitBtn.disabled = true;
@@ -289,8 +282,10 @@ function addTodoModal() {
   submitBtn.textContent = 'Add Task';
   cancelBtn.textContent = 'Cancel';
 
+  submitBtn.addEventListener('click', addTodo);
+
   function enableDisable() {
-    if (titleInput.value.trim() != '' && dayInput.value.trim() != '' && monInput.value.trim() != '' && yearInput.value.trim() != '') {
+    if (titleInput.value.trim() != '') {
       submitBtn.disabled = false;
     } else {
       submitBtn.disabled = true;
@@ -311,16 +306,22 @@ function addTodoModal() {
 }
 
 function addTodo() {
-  const title = document.querySelector('.modal-title');
-  const desc = document.querySelector('.modal-desc');
-  const day = document.querySelector('.modal-day');
-  const mon = document.querySelector('.modal-mon');
-  const year = document.querySelector('.modal-year');
-  const priority = document.querySelector('.modal-priority');
-  const projLocation = document.querySelector('.modal-project')
+  const title = document.querySelector('.modal-title').value;
+  const desc = document.querySelector('.modal-desc').value;
+  const date = document.querySelector('.modal-date').value;
+  // const priority = document.querySelector('.modal-priority').value;
+  // const projLocation = document.querySelector('.modal-project').value;
 
-  todoList.push(createTodo(title, desc, day, mon, year, priority, projLocation));
-  todoList = sortTodoListByDate(todoList);
+  let day = '';
+  let mon = '';
+  let year = '';
+
+  if (date != '') {
+    [year, mon, day] = date.split('-');
+  } 
+  
+  todoList.push(createTodo(title, desc, day, mon, year, '4', ''));
+  updateTodoLists();
 }
 
 function removeTodo() {
