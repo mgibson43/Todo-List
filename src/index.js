@@ -6,6 +6,7 @@ const mainInbox = document.querySelector('.main-inbox');
 const homeBtn = document.querySelector('.btn-home');
 const docTodayInbox = document.querySelector('.today-inbox');
 const docPriorityInbox = document.querySelector('.priority-inbox');
+const addTask = document.querySelector('.add-task');
 
 let projects = [];
 let currentProject = 'This'
@@ -226,6 +227,7 @@ function createTodo(title, desc, day, mon, year, priority, type) {
 }
 
 function addTodoModal() {
+  content.style.display = 'none';
   const modal = document.createElement('div');
   const form = document.createElement('form');
 
@@ -302,7 +304,7 @@ function addTodoModal() {
 
   modal.appendChild(form);
 
-  content.appendChild(modal);
+  document.body.appendChild(modal);
 }
 
 function addTodo() {
@@ -362,6 +364,7 @@ mainInbox.addEventListener('click', inbox);
 homeBtn.addEventListener('click', inbox);
 docTodayInbox.addEventListener('click', todayInbox);
 docPriorityInbox.addEventListener('click', priorityInbox);
+addTask.addEventListener('click', addTodoModal);
 
 // updateTodoLists();
 // projectInbox();

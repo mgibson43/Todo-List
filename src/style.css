@@ -102,6 +102,13 @@ header .icon:hover,
   background-color: #e6fcf5;
 }
 
+/* #content-container {
+
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+} */
+
 #content {
   grid-area: 2 / 2 / 3 / 3;
 
@@ -199,6 +206,13 @@ header .icon:hover,
 
 .modal {
   margin: 0 auto;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-25%);
+  padding: 1rem;
+  border-radius: 6px;
+  background-color: #fff;
   z-index: 10;
 }
 
