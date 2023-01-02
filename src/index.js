@@ -262,6 +262,7 @@ function addTodoModal() {
 
   dateBox.classList.add('modal-box');
   dateInput.classList.add('modal-date');
+  dateInput.setAttribute('placeholder', 'mm/dd/yyyy');
 
   dateInput.type = 'date';
 
@@ -273,6 +274,7 @@ function addTodoModal() {
   const submitBtn = document.createElement('button');
   const cancelBtn = document.createElement('button');
 
+  btnBox.classList.add('btn-box');
   submitBtn.classList.add('submit-btn');
   cancelBtn.classList.add('cancel-btn');
 
