@@ -16,7 +16,7 @@ let futureList = [];
 let priorityList = [];
 const today = new Date();
 
-todoList.push(createTodo("Matthew's Birthday", "He's old", 9, 0, 1998, '4', ''));
+todoList.push(createTodo("Matthew's Birthday", "", 9, 0, 1998, '4', ''));
 todoList.push(createTodo("Xio's Birthday", "She's young", 11, 3, 2001, '1', ''));
 todoList.push(createTodo("Today", 'today card', 30, 11, 2022, '4', ''));
 todoList.push(createTodo('you?', 'this is a todo', 8, 3, 2200, '3', ''));
@@ -221,13 +221,105 @@ function createTodo(title, desc, day, mon, year, priority, type) {
   };
 }
 
-function addTodo() {
-  const title = document.querySelector('.title');
-  const desc = document.querySelector('.desc');
-  const dueDate = document.querySelector('.dueDate');
-  const priority = document.querySelector('.priority');
+function addTodoModal() {
+  const modal = document.createElement('div');
+  const form = document.createElement('form');
 
-  todoList.push(createTodo(title, desc, dueDate, priority));
+  modal.classList.add('modal');
+  form.classList.add('todo-form');
+
+  const titleBox = document.createElement('div');
+  const titleInput = document.createElement('input');
+
+  titleBox.classList.add('modal-box');
+  titleBox.classList.add('modal-box-title');
+  titleInput.classList.add('modal-title');
+
+  titleInput.setAttribute('placeholder', 'Title');
+  titleInput.onkeyup = enableDisable;
+
+  titleBox.appendChild(titleInput);
+
+  const descBox = document.createElement('div');
+  const descInput = document.createElement('input');
+
+  descBox.classList.add('modal-box');
+  descBox.classList.add('modal-box-desc');
+  descInput.classList.add('modal-desc');
+
+  descInput.setAttribute('placeholder', 'Description');
+
+  descBox.appendChild(descInput);
+
+  const dateBox = document.createElement('div');
+  const dayInput = document.createElement('input');
+  const monInput = document.createElement('input');
+  const yearInput = document.createElement('input');
+
+  dateBox.classList.add('modal-box');
+  dateBox.classList.add('modal-box-date');
+  dayInput.classList.add('modal-day');
+  monInput.classList.add('modal-mon');
+  yearInput.classList.add('modal-year');
+
+  dayInput.onkeyup = enableDisable;
+  monInput.onkeyup = enableDisable;
+  yearInput.onkeyup = enableDisable;
+
+  dateBox.appendChild(monInput);
+  dateBox.appendChild(dayInput);
+  dateBox.appendChild(yearInput);
+
+  dayInput.setAttribute('placeholder', 'DD');
+  monInput.setAttribute('placeholder', 'MM');
+  yearInput.setAttribute('placeholder', 'YYYY');
+
+  const btnBox = document.createElement('div');
+  const submitBtn = document.createElement('button');
+  const cancelBtn = document.createElement('button');
+
+  submitBtn.classList.add('submit-btn');
+  cancelBtn.classList.add('cancel-btn');
+
+  submitBtn.type = 'submit';
+  cancelBtn.type = 'button';
+
+  submitBtn.disabled = true;
+
+  submitBtn.textContent = 'Add Task';
+  cancelBtn.textContent = 'Cancel';
+
+  function enableDisable() {
+    if (titleInput.value.trim() != '' && dayInput.value.trim() != '' && monInput.value.trim() != '' && yearInput.value.trim() != '') {
+      submitBtn.disabled = false;
+    } else {
+      submitBtn.disabled = true;
+    }
+  }
+
+  btnBox.appendChild(cancelBtn);
+  btnBox.appendChild(submitBtn);
+
+  form.appendChild(titleBox);
+  form.appendChild(descBox);
+  form.appendChild(dateBox);
+  form.appendChild(btnBox);
+
+  modal.appendChild(form);
+
+  content.appendChild(modal);
+}
+
+function addTodo() {
+  const title = document.querySelector('.modal-title');
+  const desc = document.querySelector('.modal-desc');
+  const day = document.querySelector('.modal-day');
+  const mon = document.querySelector('.modal-mon');
+  const year = document.querySelector('.modal-year');
+  const priority = document.querySelector('.modal-priority');
+  const projLocation = document.querySelector('.modal-project')
+
+  todoList.push(createTodo(title, desc, day, mon, year, priority, projLocation));
   todoList = sortTodoListByDate(todoList);
 }
 
@@ -270,5 +362,6 @@ homeBtn.addEventListener('click', inbox);
 docTodayInbox.addEventListener('click', todayInbox);
 docPriorityInbox.addEventListener('click', priorityInbox);
 
-updateTodoLists();
-projectInbox();
+// updateTodoLists();
+// projectInbox();
+addTodoModal();
