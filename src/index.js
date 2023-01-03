@@ -24,21 +24,23 @@ todoList.push(createTodo('you?', 'this is a todo', 8, 3, 2200, '3', ''));
 todoList.push(createTodo('are', 'this is a todo', 7, 4, 2042, '2', ''));
 todoList.push(createTodo('how', 'this is a todo', 6, 5, 2023, '3', ''));
 
+projects.push(project('inbox'));
 projects.push(project('This'));
 projects.push(project('Project'));
 
 todoList.push(createTodo('Test', 'Project Test', 31, 11, 2022, '4', projects[0].projID));
 todoList.push(createTodo('Test', 'Project Test', 31, 10, 2022, '4', projects[1].projID));
 
-function inbox() {
+function defaultInbox() {
   content.innerHTML = '';
 
   const inboxTitleBox = document.createElement('div');
-  const inboxTitle = document.createElement('h2');
+  const inboxTitle = document.createElement('h3');
   const date = document.createElement('span');
 
   inboxTitleBox.classList.add('inbox-title-box');
   inboxTitle.classList.add('inbox-title');
+  inboxTitle.classList.add('inbox-heading');
 
   inboxTitle.textContent = 'Inbox ';
   date.classList.add('date');
@@ -62,25 +64,19 @@ function inbox() {
 function todayInbox() {
   content.innerHTML = '';
 
-  if (todayList.length > 0) {
-    content.appendChild(todayTodo());
-    const heading = document.querySelector('.heading');
-    heading.classList.add('inbox-title');
-  } else {
-    content.appendChild(emptyInbox());
-  }
+  content.appendChild(todayTodo());
+  const heading = document.querySelector('.heading');
+  heading.classList.add('inbox-title');
+  heading.classList.add('inbox-heading');
 }
 
 function priorityInbox() {
   content.innerHTML = '';
 
-  if (priorityList.length > 0) {
-    content.appendChild(priorityTodo());
-    const heading = document.querySelector('.heading');
-    heading.classList.add('inbox-title');
-  } else {
-    content.appendChild(emptyInbox());
-  }
+  content.appendChild(priorityTodo());
+  const heading = document.querySelector('.heading');
+  heading.classList.add('inbox-title');
+  heading.classList.add('inbox-heading');
 }
 
 function overDueTodo() {
@@ -96,13 +92,6 @@ function overDueTodo() {
   overDueBox.appendChild(heading);
   overDueBox.appendChild(overDueInbox);
   return overDueBox;
-}
-
-function emptyInbox() {
-  const emptyBox = document.createElement('h3');
-  emptyBox.classList.add('inbox-title');
-  emptyBox.textContent = 'Nothing in this inbox, enjoy your day!';
-  return emptyBox;
 }
 
 function todayTodo() {
@@ -199,6 +188,7 @@ function projectInbox() {
   const projectInbox = document.createElement('div');
 
   heading.classList.add('heading');
+  heading.classList.add('inbox-heading');
   heading.textContent = currentProject;
 
   workingList.forEach(todo => projectInbox.appendChild(todoCard(todo)));
@@ -270,6 +260,30 @@ function addTodoModal() {
 
   dateBox.appendChild(dateInput);
 
+  const dropDownBox = document.createElement('div');
+  const prioritySelector = document.createElement('select');
+  const projectSelector = document.createElement('select');  
+
+  prioritySelector.classList.add('modal-priority');
+  projectSelector.classList.add('modal-project');
+
+  for (let i = 1; i < 5; i++) {
+    const priorityOption = document.createElement('option');
+    priorityOption.textContent = i;
+    prioritySelector.appendChild(priorityOption);
+  };
+
+  projects.forEach(project => {
+    const projectOption = document.createElement('option');
+    projectOption.dataset.projID = project.projID;
+    projectOption.textContent = project.projID;
+
+    projectSelector.appendChild(projectOption);
+  });
+
+  dropDownBox.appendChild(prioritySelector);
+  dropDownBox.appendChild(projectSelector);
+
   const btnBox = document.createElement('div');
   const submitBtn = document.createElement('button');
   const cancelBtn = document.createElement('button');
@@ -287,6 +301,7 @@ function addTodoModal() {
   cancelBtn.textContent = 'Cancel';
 
   submitBtn.addEventListener('click', addTodo);
+  cancelBtn.addEventListener('click', removeTodoModal);
 
   function enableDisable() {
     if (titleInput.value.trim() != '') {
@@ -302,6 +317,7 @@ function addTodoModal() {
   form.appendChild(titleBox);
   form.appendChild(descBox);
   form.appendChild(dateBox);
+  form.appendChild(dropDownBox);
   form.appendChild(btnBox);
 
   modal.appendChild(form);
@@ -309,12 +325,17 @@ function addTodoModal() {
   document.body.appendChild(modal);
 }
 
+function removeTodoModal() {
+  document.querySelector('.modal').remove();
+  content.style.display = 'initial';
+}
+
 function addTodo() {
   const title = document.querySelector('.modal-title').value;
   const desc = document.querySelector('.modal-desc').value;
   const date = document.querySelector('.modal-date').value;
-  // const priority = document.querySelector('.modal-priority').value;
-  // const projLocation = document.querySelector('.modal-project').value;
+  const priority = document.querySelector('.modal-priority').value;
+  const projLocation = document.querySelector('.modal-project').value;
 
   let day = '';
   let mon = '';
@@ -324,8 +345,10 @@ function addTodo() {
     [year, mon, day] = date.split('-');
   } 
   
-  todoList.push(createTodo(title, desc, day, mon, year, '4', ''));
+  todoList.push(createTodo(title, desc, day, mon, year, priority, projLocation));
   updateTodoLists();
+  removeTodoModal();
+  updateDisplay();
 }
 
 function removeTodo() {
@@ -335,6 +358,25 @@ function removeTodo() {
   updateTodoLists();
 }
 
+function updateDisplay() {
+  const inbox = document.querySelector('.inbox-heading').textContent.split(' ')[0];
+  switch(inbox) {
+    case 'Inbox':
+      defaultInbox();
+      break;
+
+    case 'Today':
+      todayInbox();
+      break;
+    
+    case 'Priority':
+      priorityInbox();
+      break;
+
+    default:
+      projectInbox();
+  }
+}
 
 function sortTodoListByDate(arr) {
   for (let i = 0; i < arr.length; i++) {
@@ -362,12 +404,11 @@ function updateTodoLists() {
   priorityList = todoList.sort((a, b) => a.priority - b.priority);
 }
 
-mainInbox.addEventListener('click', inbox);
-homeBtn.addEventListener('click', inbox);
+mainInbox.addEventListener('click', defaultInbox);
+homeBtn.addEventListener('click', defaultInbox);
 docTodayInbox.addEventListener('click', todayInbox);
 docPriorityInbox.addEventListener('click', priorityInbox);
 addTask.addEventListener('click', addTodoModal);
 
-// updateTodoLists();
-// projectInbox();
-addTodoModal();
+updateTodoLists();
+defaultInbox();

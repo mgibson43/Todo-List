@@ -213,6 +213,7 @@ header .icon:hover,
 .todo-form {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  align-items: center;
   row-gap: 2rem;
 }
 
@@ -253,6 +254,7 @@ header .icon:hover,
 }
 
 .btn-box {
+  grid-area: 3 / 2 / 4 / 3;
   display: flex;
   gap: 1rem;
 }
