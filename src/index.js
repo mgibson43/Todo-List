@@ -1,5 +1,6 @@
 import './style.css';
 import { format, getDay, isFuture, isPast, compareAsc, isToday, isYesterday } from 'date-fns';
+import deleteIcon from './icons/delete.svg';
 
 const content = document.getElementById('content');
 const mainInbox = document.querySelector('.main-inbox');
@@ -7,29 +8,15 @@ const homeBtn = document.querySelector('.btn-home');
 const docTodayInbox = document.querySelector('.today-inbox');
 const docPriorityInbox = document.querySelector('.priority-inbox');
 const addTask = document.querySelector('.add-task');
+const addProject = document.querySelector('.add-project');
 
 let projects = [];
-let currentProject = 'This'
 let todoList = [];
 let overDueList = [];
 let todayList = [];
 let futureList = [];
 let priorityList = [];
 const today = new Date();
-
-todoList.push(createTodo("Matthew's Birthday", "", 9, 0, 1998, '4', ''));
-todoList.push(createTodo("Xio's Birthday", "She's young", 11, 3, 2001, '1', ''));
-todoList.push(createTodo("Today", 'today card', 30, 11, 2022, '4', ''));
-todoList.push(createTodo('you?', 'this is a todo', 8, 3, 2200, '3', ''));
-todoList.push(createTodo('are', 'this is a todo', 7, 4, 2042, '2', ''));
-todoList.push(createTodo('how', 'this is a todo', 6, 5, 2023, '3', ''));
-
-projects.push(project('inbox'));
-projects.push(project('This'));
-projects.push(project('Project'));
-
-todoList.push(createTodo('Test', 'Project Test', 31, 11, 2022, '4', projects[0].projID));
-todoList.push(createTodo('Test', 'Project Test', 31, 10, 2022, '4', projects[1].projID));
 
 function defaultInbox() {
   content.innerHTML = '';
@@ -181,7 +168,71 @@ function project(projID) {
   }
 }
 
+function createProject() {
+  const projectTitle = document.querySelector('.modal-title');
+  projects.push(project(projectTitle.value));
+  updateProjectList();
+  removeModal();
+}
+
+function projectCard(project) {
+  const projectList = document.querySelector('.projects-list');
+  const li = document.createElement('li');
+  const p = document.createElement('p');
+  const btn = document.createElement('button');
+
+  li.classList.add('project-list');
+  li.dataset.project = project.projID;
+
+  const removeIcon = new Image();
+  removeIcon.src = deleteIcon;
+  removeIcon.classList.add('icon');
+
+  btn.classList.add('remove-project-btn');
+  btn.classList.add('btn');
+  btn.addEventListener('click', removeProject);
+
+  btn.appendChild(removeIcon);
+
+  li.addEventListener('click', projectInbox);
+
+  p.textContent = project.projID;
+  li.appendChild(p);
+  li.appendChild(btn);
+
+  projectList.appendChild(li);
+}
+
+function removeProject(e) {
+  e.stopPropagation();
+  const currentProject = this.parentNode;
+  const workingList = todoList.filter(todo => todo.type === currentProject.dataset.project);
+
+  workingList.forEach(item => {
+    const index = todoList.findIndex(todo => todo.type === item.type);
+    todoList.splice(index, 1);
+  }); 
+
+  const projectIndex = projects.findIndex(project => project.projID === currentProject.dataset.project);
+
+  projects.splice(projectIndex, 1);
+
+  currentProject.remove();
+  updateProjectList();
+  updateTodoLists();
+  defaultInbox();
+}
+
+function updateProjectList() {
+  document.querySelector('.projects-list').innerHTML = '';
+  projects.forEach(project => {
+    projectCard(project);
+  });
+}
+
 function projectInbox() {
+  content.innerHTML = '';
+  const currentProject = this.dataset.project;
   const workingList = todoList.filter(todo => todo.type === currentProject);
   const projectBox = document.createElement('div');
   const heading = document.createElement('h3');
@@ -264,12 +315,19 @@ function addTodoModal() {
   const prioritySelector = document.createElement('select');
   const projectSelector = document.createElement('select');  
 
+  const inboxOption = document.createElement('option');
+  inboxOption.textContent = 'Inbox';
+  inboxOption.setAttribute('selected', '');
+
+  projectSelector.appendChild(inboxOption);
+
   prioritySelector.classList.add('modal-priority');
   projectSelector.classList.add('modal-project');
 
-  for (let i = 1; i < 5; i++) {
+  for (let i = 4; i >= 1; i--) {
     const priorityOption = document.createElement('option');
     priorityOption.textContent = i;
+    priorityOption.classList = `priority-${i}`;
     prioritySelector.appendChild(priorityOption);
   };
 
@@ -297,11 +355,11 @@ function addTodoModal() {
 
   submitBtn.disabled = true;
 
-  submitBtn.textContent = 'Add Task';
+  submitBtn.textContent = 'Add';
   cancelBtn.textContent = 'Cancel';
 
   submitBtn.addEventListener('click', addTodo);
-  cancelBtn.addEventListener('click', removeTodoModal);
+  cancelBtn.addEventListener('click', removeModal);
 
   function enableDisable() {
     if (titleInput.value.trim() != '') {
@@ -325,7 +383,65 @@ function addTodoModal() {
   document.body.appendChild(modal);
 }
 
-function removeTodoModal() {
+function addProjectModal() {
+  content.style.display = 'none';
+  const modal = document.createElement('div');
+  const form = document.createElement('form');
+
+  modal.classList.add('modal');
+  form.classList.add('project-form');
+
+  const titleBox = document.createElement('div');
+  const titleInput = document.createElement('input');
+
+  titleBox.classList.add('modal-box');
+  titleBox.classList.add('modal-box-title');
+  titleInput.classList.add('modal-title');
+
+  titleInput.setAttribute('placeholder', 'Project');
+  titleInput.onkeyup = enableDisable;
+
+  titleBox.appendChild(titleInput);
+
+  const btnBox = document.createElement('div');
+  const submitBtn = document.createElement('button');
+  const cancelBtn = document.createElement('button');
+
+  btnBox.classList.add('btn-box');
+  submitBtn.classList.add('submit-btn');
+  cancelBtn.classList.add('cancel-btn');
+
+  submitBtn.type = 'button';
+  cancelBtn.type = 'button';
+
+  submitBtn.disabled = true;
+
+  submitBtn.textContent = 'Add';
+  cancelBtn.textContent = 'Cancel';
+
+  submitBtn.addEventListener('click', createProject);
+  cancelBtn.addEventListener('click', removeModal);
+
+  function enableDisable() {
+    if (titleInput.value.trim() != '') {
+      submitBtn.disabled = false;
+    } else {
+      submitBtn.disabled = true;
+    }
+  }
+
+  btnBox.appendChild(cancelBtn);
+  btnBox.appendChild(submitBtn);
+
+  form.appendChild(titleBox);
+  form.appendChild(btnBox);
+
+  modal.appendChild(form);
+
+  document.body.appendChild(modal);
+}
+
+function removeModal() {
   document.querySelector('.modal').remove();
   content.style.display = 'initial';
 }
@@ -347,7 +463,7 @@ function addTodo() {
   
   todoList.push(createTodo(title, desc, day, mon, year, priority, projLocation));
   updateTodoLists();
-  removeTodoModal();
+  removeModal();
   updateDisplay();
 }
 
@@ -409,6 +525,7 @@ homeBtn.addEventListener('click', defaultInbox);
 docTodayInbox.addEventListener('click', todayInbox);
 docPriorityInbox.addEventListener('click', priorityInbox);
 addTask.addEventListener('click', addTodoModal);
+addProject.addEventListener('click', addProjectModal);
 
 updateTodoLists();
 defaultInbox();

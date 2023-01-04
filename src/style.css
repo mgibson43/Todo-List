@@ -18,7 +18,8 @@ li {
   cursor: pointer;
 }
 
-li:hover {
+li:hover,
+.remove-project-btn:hover {
   background-color: #c3fae8;
 }
 
@@ -63,6 +64,13 @@ li:hover {
   font-size: 18px;
 }
 
+.remove-project-btn {
+  border: none;
+  justify-self: flex-end;
+  background-color: #e6fcf5;
+  cursor: pointer;
+}
+
 .icon-box {
   display: flex;
   gap: 1rem;
@@ -86,7 +94,8 @@ li:hover {
 }
 
 header .icon:hover,
-.add-project:hover {
+.add-project:hover,
+.remove-project-btn:hover {
   transform: scale(120%);
   cursor: pointer;
 }
@@ -263,9 +272,14 @@ header .icon:hover,
 .cancel-btn {
   padding: 0.6rem;
   width: 5.4rem;
-  justify-self: center;
+
+  font-size: 16px;
+  font-weight: 600;
+
   border: none;
   border-radius: 6px;
+
+  justify-self: center;
   cursor: pointer;
 }
 
@@ -285,4 +299,11 @@ header .icon:hover,
 
 .submit-btn:hover {
   background-color: #2b8a3e;
+}
+
+.project-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
 }
