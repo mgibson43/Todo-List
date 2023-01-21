@@ -134,8 +134,11 @@ function todoCard(todo) {
   const desc = document.createElement('p');
   const dueDate = document.createElement('p');
   const project = document.createElement('p');
+  const removeBtn = document.createElement('input');
 
-  todoCardEl.addEventListener('click', removeTodo);
+  removeBtn.classList.add('remove-btn');
+  removeBtn.setAttribute('type', 'radio');
+  removeBtn.addEventListener('click', removeTodo);
 
   todoCardEl.classList.add('todo-card');
   todoCardEl.classList.add(`priority-${todo.priority}`);
@@ -153,6 +156,7 @@ function todoCard(todo) {
   dueDate.textContent = format(todo.dueDate, 'MMM dd, yyyy');
   project.textContent = todo.type;
 
+  todoCardEl.appendChild(removeBtn);
   todoCardEl.appendChild(title);
   todoCardEl.appendChild(desc);
   todoCardEl.appendChild(dueDate);
@@ -446,6 +450,10 @@ function removeModal() {
   content.style.display = 'initial';
 }
 
+function editTodoModal() {
+
+}
+
 function addTodo() {
   const title = document.querySelector('.modal-title').value;
   const desc = document.querySelector('.modal-desc').value;
@@ -470,7 +478,7 @@ function addTodo() {
 function removeTodo() {
   const index = todoList.findIndex(todo => todo.title === this.dataset.value);
   todoList.splice(index, 1);
-  this.remove();
+  this.parentNode.remove();
   updateTodoLists();
 }
 
