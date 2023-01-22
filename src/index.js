@@ -258,7 +258,7 @@ function createTodo(title, desc, day, mon, year, priority, type, value) {
   let dueDate = today;
 
   if (day != '') {
-    dueDate = new Date(year, mon, day);
+    dueDate = new Date(year, (mon - 1), day);
   }
 
   type === '' ? type = 'inbox' : type = type;
@@ -457,6 +457,9 @@ function editTodoModal() {
   const modal = document.createElement('div');
   const form = document.createElement('form');
 
+  const value = this.dataset.value;
+  const workingTodo = todoList.find(todo => todo.value === value);
+
   modal.classList.add('modal');
   form.classList.add('todo-form');
 
@@ -467,7 +470,7 @@ function editTodoModal() {
   titleBox.classList.add('modal-box-title');
   titleInput.classList.add('modal-title');
 
-  titleInput.setAttribute('placeholder', 'Title');
+  titleInput.setAttribute('value', workingTodo.title);
   titleInput.onkeyup = enableDisable;
 
   titleBox.appendChild(titleInput);
@@ -479,7 +482,11 @@ function editTodoModal() {
   descBox.classList.add('modal-box-desc');
   descInput.classList.add('modal-desc');
 
-  descInput.setAttribute('placeholder', 'Description');
+  if (workingTodo.desc === '') {
+    descInput.setAttribute('placeholder', 'Description');
+  } else {
+    descInput.setAttribute('value', workingTodo.desc);
+  }
 
   descBox.appendChild(descInput);
 
@@ -540,10 +547,12 @@ function editTodoModal() {
 
   submitBtn.disabled = true;
 
-  submitBtn.textContent = 'Add';
+  submitBtn.textContent = 'Edit';
   cancelBtn.textContent = 'Cancel';
 
-  submitBtn.addEventListener('click', addTodo);
+  submitBtn.addEventListener('click', function() {
+    editTodo(value);
+  });
   cancelBtn.addEventListener('click', removeModal);
 
   function enableDisable() {
@@ -566,9 +575,7 @@ function editTodoModal() {
   modal.appendChild(form);
 
   document.body.appendChild(modal);
-
-  console.log(this);
-  console.log(todoList);
+  enableDisable();
 }
 
 function addTodo() {
@@ -588,6 +595,29 @@ function addTodo() {
 
   const value = uniqueValue(date);
   
+  todoList.push(createTodo(title, desc, day, mon, year, priority, projLocation, value));
+  updateTodoLists();
+  removeModal();
+  updateDisplay();
+}
+
+function editTodo(value) {
+  const title = document.querySelector('.modal-title').value;
+  const desc = document.querySelector('.modal-desc').value;
+  const date = document.querySelector('.modal-date').value;
+  const priority = document.querySelector('.modal-priority').value;
+  const projLocation = document.querySelector('.modal-project').value;
+
+  let day = '';
+  let mon = '';
+  let year = '';
+
+  if (date != '') {
+    [year, mon, day] = date.split('-');
+  } 
+  
+  const index = todoList.findIndex(todo => todo.value === value);
+  todoList.splice(index, 1);
   todoList.push(createTodo(title, desc, day, mon, year, priority, projLocation, value));
   updateTodoLists();
   removeModal();
