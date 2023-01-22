@@ -143,7 +143,8 @@ function todoCard(todo) {
   todoCardEl.classList.add('todo-card');
   todoCardEl.classList.add(`priority-${todo.priority}`);
   todoCardEl.dataset.project = todo.type;
-  todoCardEl.dataset.value = todo.title;
+  todoCardEl.dataset.value = todo.value;
+  todoCardEl.addEventListener('click', editTodoModal);
 
   title.classList.add('todo-title');
   desc.classList.add('todo-desc');
@@ -253,7 +254,7 @@ function projectInbox() {
   content.appendChild(projectBox);
 }
 
-function createTodo(title, desc, day, mon, year, priority, type) {
+function createTodo(title, desc, day, mon, year, priority, type, value) {
   let dueDate = today;
 
   if (day != '') {
@@ -268,6 +269,7 @@ function createTodo(title, desc, day, mon, year, priority, type) {
     dueDate: dueDate,
     priority,
     type,
+    value,
   };
 }
 
@@ -451,7 +453,122 @@ function removeModal() {
 }
 
 function editTodoModal() {
+  content.style.display = 'none';
+  const modal = document.createElement('div');
+  const form = document.createElement('form');
 
+  modal.classList.add('modal');
+  form.classList.add('todo-form');
+
+  const titleBox = document.createElement('div');
+  const titleInput = document.createElement('input');
+
+  titleBox.classList.add('modal-box');
+  titleBox.classList.add('modal-box-title');
+  titleInput.classList.add('modal-title');
+
+  titleInput.setAttribute('placeholder', 'Title');
+  titleInput.onkeyup = enableDisable;
+
+  titleBox.appendChild(titleInput);
+
+  const descBox = document.createElement('div');
+  const descInput = document.createElement('input');
+
+  descBox.classList.add('modal-box');
+  descBox.classList.add('modal-box-desc');
+  descInput.classList.add('modal-desc');
+
+  descInput.setAttribute('placeholder', 'Description');
+
+  descBox.appendChild(descInput);
+
+  const dateBox = document.createElement('div');
+  const dateInput = document.createElement('input');
+
+  dateBox.classList.add('modal-box');
+  dateInput.classList.add('modal-date');
+  dateInput.setAttribute('placeholder', 'mm/dd/yyyy');
+
+  dateInput.type = 'date';
+
+  dateInput.onkeyup = enableDisable;
+
+  dateBox.appendChild(dateInput);
+
+  const dropDownBox = document.createElement('div');
+  const prioritySelector = document.createElement('select');
+  const projectSelector = document.createElement('select');  
+
+  const inboxOption = document.createElement('option');
+  inboxOption.textContent = 'Inbox';
+  inboxOption.setAttribute('selected', '');
+
+  projectSelector.appendChild(inboxOption);
+
+  prioritySelector.classList.add('modal-priority');
+  projectSelector.classList.add('modal-project');
+
+  for (let i = 4; i >= 1; i--) {
+    const priorityOption = document.createElement('option');
+    priorityOption.textContent = i;
+    priorityOption.classList = `priority-${i}`;
+    prioritySelector.appendChild(priorityOption);
+  };
+
+  projects.forEach(project => {
+    const projectOption = document.createElement('option');
+    projectOption.dataset.projID = project.projID;
+    projectOption.textContent = project.projID;
+
+    projectSelector.appendChild(projectOption);
+  });
+
+  dropDownBox.appendChild(prioritySelector);
+  dropDownBox.appendChild(projectSelector);
+
+  const btnBox = document.createElement('div');
+  const submitBtn = document.createElement('button');
+  const cancelBtn = document.createElement('button');
+
+  btnBox.classList.add('btn-box');
+  submitBtn.classList.add('submit-btn');
+  cancelBtn.classList.add('cancel-btn');
+
+  submitBtn.type = 'button';
+  cancelBtn.type = 'button';
+
+  submitBtn.disabled = true;
+
+  submitBtn.textContent = 'Add';
+  cancelBtn.textContent = 'Cancel';
+
+  submitBtn.addEventListener('click', addTodo);
+  cancelBtn.addEventListener('click', removeModal);
+
+  function enableDisable() {
+    if (titleInput.value.trim() != '') {
+      submitBtn.disabled = false;
+    } else {
+      submitBtn.disabled = true;
+    }
+  }
+
+  btnBox.appendChild(cancelBtn);
+  btnBox.appendChild(submitBtn);
+
+  form.appendChild(titleBox);
+  form.appendChild(descBox);
+  form.appendChild(dateBox);
+  form.appendChild(dropDownBox);
+  form.appendChild(btnBox);
+
+  modal.appendChild(form);
+
+  document.body.appendChild(modal);
+
+  console.log(this);
+  console.log(todoList);
 }
 
 function addTodo() {
@@ -468,15 +585,22 @@ function addTodo() {
   if (date != '') {
     [year, mon, day] = date.split('-');
   } 
+
+  const value = uniqueValue(date);
   
-  todoList.push(createTodo(title, desc, day, mon, year, priority, projLocation));
+  todoList.push(createTodo(title, desc, day, mon, year, priority, projLocation, value));
   updateTodoLists();
   removeModal();
   updateDisplay();
 }
 
-function removeTodo() {
-  const index = todoList.findIndex(todo => todo.title === this.dataset.value);
+function uniqueValue(date) {
+  return `${(Math.random() + 1)}${date}`;
+}
+
+function removeTodo(e) {
+  e.stopPropagation();
+  const index = todoList.findIndex(todo => todo.value === this.dataset.value);
   todoList.splice(index, 1);
   this.parentNode.remove();
   updateTodoLists();
