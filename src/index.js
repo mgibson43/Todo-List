@@ -321,6 +321,8 @@ function addTodoModal() {
   const prioritySelector = document.createElement('select');
   const projectSelector = document.createElement('select');  
 
+  dropDownBox.classList.add('drop-down-box');
+
   const inboxOption = document.createElement('option');
   inboxOption.textContent = 'Inbox';
   inboxOption.setAttribute('selected', '');

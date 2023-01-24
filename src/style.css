@@ -315,3 +315,19 @@ header .icon:hover,
   justify-content: center;
   gap: 1rem;
 }
+
+.drop-down-box {
+  display: flex;
+  justify-content: space-between;
+  width: 11.6rem;
+}
+
+select {
+  width: 5rem;
+  padding: 0.4rem 0.4rem;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+
+  cursor: pointer;
+}
