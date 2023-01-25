@@ -1,5 +1,5 @@
 import './style.css';
-import { format, getDay, isFuture, isPast, compareAsc, isToday, isYesterday } from 'date-fns';
+import { format, parseISO, isFuture, isPast, compareAsc, isToday } from 'date-fns';
 import deleteIcon from './icons/delete.svg';
 
 const content = document.getElementById('content');
@@ -10,13 +10,25 @@ const docPriorityInbox = document.querySelector('.priority-inbox');
 const addTask = document.querySelector('.add-task');
 const addProject = document.querySelector('.add-project');
 
-let projects = [];
-let todoList = [];
+if (!localStorage.getItem('TodoList')) {
+  localStorage.setItem('TodoList', '[]');
+}
+
+if (!localStorage.getItem('ProjectList')) {
+  localStorage.setItem('ProjectList', '[]');
+}
+
+let projects = JSON.parse(localStorage.getItem('ProjectList'));
+let todoList = JSON.parse(localStorage.getItem('TodoList'));
 let overDueList = [];
 let todayList = [];
 let futureList = [];
 let priorityList = [];
 const today = new Date();
+
+if (todoList.length > 0) {
+  todoList.forEach(todo => todo.dueDate = parseISO(todo.dueDate));
+}
 
 function defaultInbox() {
   content.innerHTML = '';
@@ -178,6 +190,8 @@ function createProject() {
   projects.push(project(projectTitle.value));
   updateProjectList();
   removeModal();
+  localStorage.removeItem('ProjectList');
+  localStorage.setItem('ProjectList', JSON.stringify(projects));
 }
 
 function projectCard(project) {
@@ -226,6 +240,11 @@ function removeProject(e) {
   updateProjectList();
   updateTodoLists();
   defaultInbox();
+  localStorage.removeItem('ProjectList');
+  localStorage.setItem('ProjectList', JSON.stringify(projects));
+  localStorage.removeItem('TodoList');
+  localStorage.setItem('TodoList', JSON.stringify(todoList));
+  console.log(projects, todoList);
 }
 
 function updateProjectList() {
@@ -233,6 +252,7 @@ function updateProjectList() {
   projects.forEach(project => {
     projectCard(project);
   });
+
 }
 
 function projectInbox() {
@@ -601,6 +621,8 @@ function addTodo() {
   updateTodoLists();
   removeModal();
   updateDisplay();
+  localStorage.removeItem('TodoList');
+  localStorage.setItem('TodoList', JSON.stringify(todoList));
 }
 
 function editTodo(value) {
@@ -636,6 +658,8 @@ function removeTodo(e) {
   todoList.splice(index, 1);
   this.parentNode.remove();
   updateTodoLists();
+  localStorage.removeItem('TodoList');
+  localStorage.setItem('TodoList', JSON.stringify(todayList));
 }
 
 function updateDisplay() {
@@ -692,4 +716,5 @@ addTask.addEventListener('click', addTodoModal);
 addProject.addEventListener('click', addProjectModal);
 
 updateTodoLists();
+updateProjectList();
 defaultInbox();
