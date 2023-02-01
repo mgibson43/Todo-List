@@ -294,6 +294,7 @@ function createTodo(title, desc, day, mon, year, priority, type, value) {
 }
 
 function addTodoModal() {
+  disableBtns();
   content.style.display = 'none';
   const modal = document.createElement('div');
   const form = document.createElement('form');
@@ -412,6 +413,7 @@ function addTodoModal() {
 }
 
 function addProjectModal() {
+  disableBtns();
   content.style.display = 'none';
   const modal = document.createElement('div');
   const form = document.createElement('form');
@@ -472,9 +474,11 @@ function addProjectModal() {
 function removeModal() {
   document.querySelector('.modal').remove();
   content.style.display = 'initial';
+  enableBtns();
 }
 
 function editTodoModal() {
+  disableBtns();
   content.style.display = 'none';
   const modal = document.createElement('div');
   const form = document.createElement('form');
@@ -598,6 +602,16 @@ function editTodoModal() {
 
   document.body.appendChild(modal);
   enableDisable();
+}
+
+function disableBtns() {
+  addTask.style.pointerEvents = 'none';
+  addProject.style.pointerEvents = 'none';
+}
+
+function enableBtns() {
+  addTask.style.pointerEvents = 'initial';
+  addProject.style.pointerEvents = 'initial';
 }
 
 function addTodo() {

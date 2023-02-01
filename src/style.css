@@ -100,9 +100,17 @@ header .icon:hover,
   cursor: pointer;
 }
 
+.add-project {
+  
+}
+
 .add-task-box {
   display: flex;
   gap: 1rem;
+}
+
+.add-task {
+
 }
 
 .nav {
